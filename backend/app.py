@@ -48,22 +48,25 @@ def login():
         user_info = requests.get(
             "https://www.googleapis.com/oauth2/v3/userinfo", headers=headers
         ).json()
-
+        
         jwt_token = create_access_token(identity=user_info["email"])
         response = jsonify(user=user_info)
         response.set_cookie("access_token_cookie", value=jwt_token, secure=False)
-        return response, 200
+        return {"success": True, "message": "Logged in successfully!", "data": response}, 200
     
     except Exception as e:
-        return jsonify(error="An unexpected error occurred"), 500
+        return {"success": False, "message": f"Login Failed! {str(e)}", "data": None}, 500
         
 
 @app.route("/user", methods=["GET"])
 @jwt_required()
 def user():
-    jwt_token = request.cookies.get('access_token_cookie')
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    try:
+        jwt_token = request.cookies.get('access_token_cookie')
+        current_user = get_jwt_identity()
+        return jsonify(logged_in_as=current_user), 200
+    except Exception as e:
+        return jsonify(error="An unexpected error occurred"), 500
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
