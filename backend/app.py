@@ -29,6 +29,41 @@ jwt = JWTManager(app)
 def hello_world():
     return {"success": True, "message": "Server is up and running 🚀"}
 
+@app.route("/login", methods=["POST"])
+def login():
+    try:
+        auth_code = request.get_json()["code"]
+        if not auth_code:
+            return jsonify(error="Auth Code missing for Google Auth Code flow"), 403
+        data = {
+            "code": auth_code,
+            "client_id": GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SECRET,
+            "redirect_uri": "postmessage",
+            "grant_type": "authorization_code",
+        }
+
+        response = requests.post("https://oauth2.googleapis.com/token", data=data).json()
+        headers = {"Authorization": f'Bearer {response["access_token"]}'}
+        user_info = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo", headers=headers
+        ).json()
+
+        jwt_token = create_access_token(identity=user_info["email"])
+        response = jsonify(user=user_info)
+        response.set_cookie("access_token_cookie", value=jwt_token, secure=False)
+        return response, 200
+    
+    except Exception as e:
+        return jsonify(error="An unexpected error occurred"), 500
+        
+
+@app.route("/user", methods=["GET"])
+@jwt_required()
+def user():
+    jwt_token = request.cookies.get('access_token_cookie')
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
