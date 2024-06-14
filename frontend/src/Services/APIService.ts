@@ -1,25 +1,23 @@
 import axios from "axios";
+import { User } from "../utils/Interface";
 
 export class APIService {
-  static signInWithGoogle(code: string) {
+  static config = {
+    maxBodyLength: Infinity,
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  static getUserInfo() : Promise<User|undefined> {
     return new Promise((resolve, reject) => {
       axios
-        .post(
-          `${process.env.BACKEND_URL}/login`,
-          {
-            code: code,
-          },
-          {
-            headers: {
-              withCredentials: true,
-              "Content-Type": "application/json",
-            },
-          }
-        )
+        .get(`${process.env.BACKEND_URL}/user`, this.config)
         .then((response) => {
-          resolve(response.data);
+          resolve(response.data['logged_in_as']);
+          console.log("USER", response.data['logged_in_as']);
         })
-        .catch((error) => reject(new Error(error?.toString())));
+        .catch((error) => {reject(new Error(error?.toString()))});
     });
   }
 }
