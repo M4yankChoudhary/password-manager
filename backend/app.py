@@ -11,7 +11,7 @@ from flask_jwt_extended import (
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "supports_credentials": True}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173", "supports_credentials": True}}) # Vite uses 5173 PORT
 
 load_dotenv()
 
