@@ -1,16 +1,20 @@
-import { Box, Button } from "@mui/material"
-import { useAppContext } from "../AppContext"
-import { useEffect } from "react"
-import { removeAccessToken } from "../App"
+import { Box } from '@mui/material'
+import { useAppContext } from '../AppContext'
+import { useEffect } from 'react'
+import ProfileCard from './components/ProfileCard'
 
 const Home = () => {
-  const {  loggedInUser, setIsLoggedIn } = useAppContext()
-  useEffect(() => {console.log("LOGG",loggedInUser)}, [loggedInUser])
+  const { loggedInUser } = useAppContext()
+  useEffect(() => {
+    console.log('LOGG', loggedInUser)
+  }, [loggedInUser])
   return (
-    <Box><Box>Welcome, {loggedInUser?.name}</Box><Button onClick={() => {
-        removeAccessToken()
-        setIsLoggedIn!(false)
-    }}>Logout</Button></Box>
+    <Box className={'center'} sx={{
+      flexDirection:'column'
+    }} width={1}>
+      <ProfileCard user={loggedInUser} />
+      
+    </Box>
   )
 }
 

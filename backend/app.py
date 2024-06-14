@@ -19,7 +19,7 @@ CORS(
     resources={
         r"/*": {"origins": ["*"], "supports_credentials": True}
     },
-)  # Vite uses 5173 PORT
+)
 
 load_dotenv()
 
