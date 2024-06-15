@@ -4,10 +4,7 @@ from bson import ObjectId
 from flask import Blueprint, Flask, request, jsonify
 from pydantic import ValidationError
 from flask_jwt_extended import (
-    create_access_token,
-    JWTManager,
     jwt_required,
-    get_jwt_identity,
 )
 
 vaults_bp = Blueprint("vaults", __name__)
@@ -69,3 +66,12 @@ def delete_vault(vault_id):
         return jsonify({"error": f"Vault with {vault_id} not found"}), 400
     result = db["vault"].delete_one({"_id": vault_id})
     return {"success": True, "message": "Vault Deleted Successfully!"}
+
+# Get All Vaults
+@vaults_bp.route("/vaults", methods=["GET"])
+# @jwt_required()
+def get_all_vaults():
+    vaults = list(db["vault"].find())
+    for vault in vaults:
+        vault['_id'] = str(vault['_id'])
+    return jsonify(vaults)
