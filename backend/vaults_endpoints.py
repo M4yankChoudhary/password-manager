@@ -11,13 +11,7 @@ vaults_bp = Blueprint("vaults", __name__)
 
 db = client["pm"]
 
-
-@vaults_bp.route("/protected-endpoints", methods=["GET"])
-@jwt_required()
-def vaults_endpoints_protected():
-    return {"success": True, "message": "Vaults Endpoints 🚀"}
-
-
+# create a vault
 @vaults_bp.route("/vault", methods=["POST"])
 # @jwt_required()
 def create_vault():
@@ -30,9 +24,31 @@ def create_vault():
     vault_dict = vault.dict()
     db["vault"].insert_one(vault_dict)
     vault_dict["_id"] = str(vault_dict["_id"])
-    return jsonify({"msg": "Vault created successfully!", "vault": vault_dict}), 201
+    return jsonify({"success": True, "message": "Vault created successfully!", "vault": vault_dict}), 201
 
+# Get a Vault by ID
+@vaults_bp.route("/vault/<vault_id>", methods=["GET"])
+# @jwt_required()
+def get_vault(vault_id):
+    if not vault_id:
+        return jsonify({"error": "Please provide vault id"}), 400
+    vault_id = ObjectId(vault_id)
+    vault = db["vault"].find_one({"_id": vault_id})
+    if not vault:
+        return jsonify({"error": f"Vault with {vault_id} not found"}), 400
+    vault['_id'] = str(vault['_id'])
+    return {"success": True, "message": "vault fecthed successfully", "data": vault}
 
+# Get All Vaults
+@vaults_bp.route("/vaults", methods=["GET"])
+# @jwt_required()
+def get_all_vaults():
+    vaults = list(db["vault"].find())
+    for vault in vaults:
+        vault['_id'] = str(vault['_id'])
+    return jsonify(vaults)
+
+# Update a vault by id
 @vaults_bp.route("/vault/<vault_id>", methods=["PATCH"])
 # @jwt_required()
 def update_vault(vault_id):
@@ -55,7 +71,7 @@ def update_vault(vault_id):
     result = db["vault"].update_one({"_id": vault_id_obj}, {"$set": vault_dict})
     return {"success": True, "message": "Vault Updated Successfully!"}
 
-
+# DELETE a Vault by ID
 @vaults_bp.route("/vault/<vault_id>", methods=["DELETE"])
 # @jwt_required()
 def delete_vault(vault_id):
@@ -67,11 +83,4 @@ def delete_vault(vault_id):
     result = db["vault"].delete_one({"_id": vault_id})
     return {"success": True, "message": "Vault Deleted Successfully!"}
 
-# Get All Vaults
-@vaults_bp.route("/vaults", methods=["GET"])
-# @jwt_required()
-def get_all_vaults():
-    vaults = list(db["vault"].find())
-    for vault in vaults:
-        vault['_id'] = str(vault['_id'])
-    return jsonify(vaults)
+
