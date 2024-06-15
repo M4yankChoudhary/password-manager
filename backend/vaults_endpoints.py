@@ -19,7 +19,7 @@ def create_vault():
     try:
         vault = Vault(**data)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"success": False, "message": e.errors()}), 400
 
     vault_dict = vault.dict()
     db["vault"].insert_one(vault_dict)
@@ -31,13 +31,13 @@ def create_vault():
 # @jwt_required()
 def get_vault(vault_id):
     if not vault_id:
-        return jsonify({"error": "Please provide vault id"}), 400
+        return jsonify({"success": False, "message": "Please provide vault id"}), 400
     vault_id = ObjectId(vault_id)
     vault = db["vault"].find_one({"_id": vault_id})
     if not vault:
-        return jsonify({"error": f"Vault with {vault_id} not found"}), 400
+        return jsonify({"success": False, "message": f"Vault with {vault_id} not found"}), 400
     vault['_id'] = str(vault['_id'])
-    return {"success": True, "message": "vault fecthed successfully", "data": vault}
+    return jsonify({"success": True, "message": "vault fecthed successfully", "data": vault}), 200
 
 # Get All Vaults
 @vaults_bp.route("/vaults", methods=["GET"])
@@ -46,7 +46,7 @@ def get_all_vaults():
     vaults = list(db["vault"].find())
     for vault in vaults:
         vault['_id'] = str(vault['_id'])
-    return jsonify(vaults)
+    return jsonify({"success": True, "message": "vaults fecthed successfully", "data": vaults})
 
 # Update a vault by id
 @vaults_bp.route("/vault/<vault_id>", methods=["PATCH"])
@@ -54,33 +54,33 @@ def get_all_vaults():
 def update_vault(vault_id):
     data = request.get_json()
     if not vault_id:
-        return jsonify({"error": "Please provide vault id"}), 400
+        return jsonify({"success": False, "message": "Please provide vault id"}), 400
     try:
         vault = Vault(**data)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"success": False, "message": e.errors()}), 400
 
     vault_dict = vault.dict()
     if not db["vault"].find_one({"_id": vault_id}):
-        return jsonify({"error": f"Vault with {vault_id} not found"}), 400
+        return jsonify({"success": False, "message": f"Vault with {vault_id} not found"}), 400
     try:
         vault_id_obj = ObjectId(vault_id)
     except Exception as e:
-        return jsonify({"error": "Failed to get vault id"}), 400
+        return jsonify({"success": False, "message": "Failed to get vault id"}), 400
 
     result = db["vault"].update_one({"_id": vault_id_obj}, {"$set": vault_dict})
-    return {"success": True, "message": "Vault Updated Successfully!"}
+    return jsonify({"success": True, "message": "Vault Updated Successfully!"}), 200
 
 # DELETE a Vault by ID
 @vaults_bp.route("/vault/<vault_id>", methods=["DELETE"])
 # @jwt_required()
 def delete_vault(vault_id):
     if not vault_id:
-        return jsonify({"error": "Please provide vault id"}), 400
+        return jsonify({"success": False,"messsage": "Please provide vault id"}), 400
     vault_id = ObjectId(vault_id)
     if not db["vault"].find_one({"_id": vault_id}):
-        return jsonify({"error": f"Vault with {vault_id} not found"}), 400
+        return jsonify({"success": False, "message": f"Vault with {vault_id} not found"}), 400
     result = db["vault"].delete_one({"_id": vault_id})
-    return {"success": True, "message": "Vault Deleted Successfully!"}
+    return jsonify({"success": True, "message": "Vault Deleted Successfully!"}), 200
 
 
