@@ -42,13 +42,19 @@ function App() {
   }, [isLoggedIn])
 
   const loadUserData = async () => {
-    const user = (await APIService.getUserInfo()) as User
-    setLoggedInUser!({
-      name: user?.name,
-      _id: user?._id,
-      email: user?.email,
-      picture: user?.picture,
-    })
+    try {
+      const user = (await APIService.getUserInfo()) as User
+      setLoggedInUser!({
+        name: user?.name,
+        _id: user?._id,
+        email: user?.email,
+        picture: user?.picture,
+      })
+    } catch (error) {
+      removeAccessToken()
+      setIsLoggedIn(false)
+    }
+
   }
 
   return (

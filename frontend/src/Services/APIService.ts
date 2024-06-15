@@ -9,15 +9,37 @@ export class APIService {
       "Content-Type": "application/json",
     },
   };
-  static getUserInfo() : Promise<User|undefined> {
+  static getUserInfo(): Promise<User> {
     return new Promise((resolve, reject) => {
       axios
         .get(`${process.env.BACKEND_URL}/user`, this.config)
         .then((response) => {
-          resolve(response.data['logged_in_as']);
-          console.log("USER", response.data['logged_in_as']);
+          resolve(response.data["logged_in_as"]);
+          console.log("USER", response.data["logged_in_as"]);
         })
-        .catch((error) => {reject(new Error(error?.toString()))});
+        .catch((error) => {
+          reject(new Error(error?.toString()));
+        });
     });
   }
 }
+
+export const getUserInfo = (): Promise<User> => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${process.env.BACKEND_URL}/user`, {
+        maxBodyLength: Infinity,
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        resolve(response.data["logged_in_as"]);
+        console.log("USER", response.data["logged_in_as"]);
+      })
+      .catch((error) => {
+        reject(new Error(error?.toString()));
+      });
+  });
+};

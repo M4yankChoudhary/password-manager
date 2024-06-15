@@ -46,10 +46,7 @@ const Auth = () => {
           removeAccessToken()
           setIsLoggedIn!(false)
           setIsLoading(false)
-          console.error('Error fetching data:', error)
         }
-
-        console.log(response.data)
         return response.data
       } catch (error) {
         removeAccessToken()

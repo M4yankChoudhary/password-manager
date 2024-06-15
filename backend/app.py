@@ -12,6 +12,8 @@ from flask_cors import CORS, cross_origin
 from database import client
 from models import User
 from bson import ObjectId
+from vaults_endpoints import vaults_bp
+from pydantic import ValidationError
 
 app = Flask(__name__)
 CORS(
@@ -35,6 +37,7 @@ app.config["JWT_SECRET_KEY"] = SECRET_KEY
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 jwt = JWTManager(app)
 
+app.register_blueprint(vaults_bp)
 
 @app.route("/", methods=["GET"])
 def hello_world():
@@ -82,8 +85,12 @@ def user():
     current_user = get_jwt_identity()
     print(current_user)
     existing_user = db["users"].find_one({"email": current_user})
-    existing_user['_id'] = str(existing_user['_id'])
-    return jsonify(logged_in_as=existing_user), 200
+    if existing_user:
+        existing_user['_id'] = str(existing_user['_id'])
+        return jsonify(logged_in_as=existing_user), 200
+    else:
+        return jsonify(error="No user found"), 401
+    
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=8000)
