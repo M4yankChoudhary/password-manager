@@ -13,6 +13,7 @@ from database import client
 from models import User
 from bson import ObjectId
 from vaults_endpoints import vaults_bp
+from passwords_endpoints import passwords_bp
 from pydantic import ValidationError
 
 app = Flask(__name__)
@@ -38,6 +39,7 @@ app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 jwt = JWTManager(app)
 
 app.register_blueprint(vaults_bp)
+app.register_blueprint(passwords_bp)
 
 @app.route("/", methods=["GET"])
 def hello_world():
