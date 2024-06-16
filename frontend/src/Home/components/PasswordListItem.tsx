@@ -1,23 +1,77 @@
-import { Box, ListItem, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  ListItem,
+  Modal,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { Password } from '../../utils/interface/Interface'
-import { RemoveRedEye } from '@mui/icons-material'
+import {
+  HideSourceTwoTone,
+  RemoveRedEye,
+} from '@mui/icons-material'
 import { useState } from 'react'
+import CircularProgressCustom from './CircularProgressCustom'
+import { ShowPasswordSchema, ShowPasswordType } from '../../utils/types/types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 type Props = {
   password?: Password
   onView: (vault?: Password) => void
 }
 
+const style = {
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  p: 4,
+}
+
 const PasswordListItem = (props: Props) => {
-  const [hovered, setHovered] = useState(false);
+  const [open, setOpen] = useState<boolean>(false)
+  const [password, setPassword] = useState<string>()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string>()
+  const handleOpen = () => setOpen(true)
+  const handleClose = () => setOpen(false)
+  const [hovered, setHovered] = useState(false)
 
   const handleMouseEnter = () => {
-    setHovered(true);
-  };
+    setHovered(true)
+  }
 
   const handleMouseLeave = () => {
-    setHovered(false);
-  };
+    setHovered(false)
+  }
+
+  const {
+    reset,
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ShowPasswordType>({ resolver: zodResolver(ShowPasswordSchema) })
+
+  const onSubmit: SubmitHandler<ShowPasswordType> = async (data) => {
+    try {
+      setError("")
+      setLoading(true)
+      handleClose()
+      setPassword('123456')
+      reset({})
+      setLoading(false)
+      console.log(data)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+      setError(error?.toString())
+    }
+  }
 
   return (
     <ListItem
@@ -76,7 +130,13 @@ const PasswordListItem = (props: Props) => {
           borderRadius={'12px'}
           sx={{ bgcolor: '#D6D6D65E' }}
         >
-          <Typography component={'a'} color={"#549DF0"} href={props.password?.domain}>{props.password?.domain}</Typography>
+          <Typography
+            component={'a'}
+            color={'#549DF0'}
+            href={props.password?.domain}
+          >
+            {props.password?.domain}
+          </Typography>
         </Box>
       </Box>
       <Box
@@ -94,9 +154,12 @@ const PasswordListItem = (props: Props) => {
           Password
         </Typography>
         <Box
-         onMouseEnter={handleMouseEnter}
-         onMouseLeave={handleMouseLeave}
-          onClick={() => props.onView(props.password)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => {
+            props.onView(props.password)
+            !password ? handleOpen() : setPassword('')
+          }}
           px={'12px'}
           py={'8px'}
           borderRadius={'12px'}
@@ -104,10 +167,75 @@ const PasswordListItem = (props: Props) => {
           gap={'12px'}
           sx={{ bgcolor: '#D6D6D65E', cursor: 'pointer' }}
         >
-         <Typography fontSize={"16px"}>{hovered ? 'Click to show password' : '••••••••••••••••••••••••••••'}</Typography>
-          <RemoveRedEye />
+          <Typography fontSize={'16px'}>
+            {hovered
+              ? password
+                ? password
+                : 'Click to show password'
+              : password
+              ? password
+              : '••••••••••••••••••••••••••••'}
+          </Typography>
+          {password ? <HideSourceTwoTone onClick={() => {console.log("Hello")}} /> : <RemoveRedEye />}
         </Box>
       </Box>
+      {/* Password Reval Modal */}
+      <Modal open={open} onClose={handleClose}>
+        <Box
+          sx={[
+            {
+              boxShadow:
+                'rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px',
+              borderRadius: '24px',
+              ...style,
+            },
+          ]}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Provide Master Key
+          </Typography>
+          <form
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              marginTop: '24px',
+            }}
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <TextField
+              className="inputRounded"
+              placeholder="Master Key"
+              type='password'
+              variant="outlined"
+              {...register('master_key')}
+              size="small"
+            />
+            {errors.master_key && (
+              <span className="error">{errors.master_key.message}</span>
+            )}
+            <Button
+              type="submit"
+              className="center"
+              disabled={loading}
+              sx={{
+                borderRadius: '24px',
+                height: '42px',
+                bgcolor: 'black',
+                ':hover': {
+                  bgcolor: 'white',
+                  color: 'black',
+                  border: '1px solid black',
+                },
+              }}
+              variant="contained"
+            >
+              Submit {loading && <CircularProgressCustom />}
+            </Button>
+            <span className="error">{error}</span>
+          </form>
+        </Box>
+      </Modal>
     </ListItem>
   )
 }

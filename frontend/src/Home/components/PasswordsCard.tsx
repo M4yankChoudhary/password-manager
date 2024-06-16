@@ -27,6 +27,11 @@ const PasswordsCard = () => {
     setSearch(e)
   }
 
+  const filteredPasswords = passwords?.filter((v) =>
+    v.username?.toLowerCase().includes(search?.toLowerCase()) ||
+    v.domain?.toLowerCase().includes(search?.toLowerCase())
+  );
+
   return (
     <Card
       className="center"
@@ -85,8 +90,8 @@ const PasswordsCard = () => {
           {vault?.description}
         </Typography>
         <Box >
-        {passwords.map((v) => (
-         <PasswordListItem onView={() => {}} password={v}/>
+        {filteredPasswords && filteredPasswords?.map((v) => (
+         <PasswordListItem key={v?._id} onView={() => {}} password={v}/>
         ))}
         </Box>
         

@@ -15,3 +15,9 @@ export const CreatePasswordSchema = z.object({
 })
 
 export type CreatePasswordType = z.infer<typeof CreatePasswordSchema>
+
+export const ShowPasswordSchema = z.object({
+    master_key: z.string().min(6),
+})
+
+export type ShowPasswordType = z.infer<typeof ShowPasswordSchema>

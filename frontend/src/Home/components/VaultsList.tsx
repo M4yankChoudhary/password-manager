@@ -25,6 +25,9 @@ const VaultsList = () => {
   const onChangeSearch = (e: string) => {
     setSearch(e)
   }
+  const filteredVaults = vaults.filter((v) =>
+    v.name?.toLowerCase().includes(search?.toLowerCase())
+  );
   return (
     <Card
       className="center"
@@ -86,8 +89,9 @@ const VaultsList = () => {
           {loading ? (
             <CircularProgressCustom />
           ) : (
-            vaults.map((v) => (
+           filteredVaults && filteredVaults.map((v) => (
               <VaultListItem
+              key={v?._id}
                 onDelete={async (vault) => {
                   if (vault?._id) {
                     setLoading(true)
