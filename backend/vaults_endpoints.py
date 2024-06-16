@@ -7,6 +7,8 @@ from flask_jwt_extended import (
     jwt_required,
 )
 
+from encryption import encrypt, decrypt
+
 vaults_bp = Blueprint("vaults", __name__)
 
 db = client["pm"]
@@ -22,6 +24,7 @@ def create_vault():
         return jsonify({"success": False, "message": e.errors()}), 400
     
     vault_dict = vault.dict()
+    vault_dict['master_key'] = encrypt(vault_dict['master_key'])
     db["vault"].insert_one(vault_dict)
     vault_dict["_id"] = str(vault_dict["_id"])
     return jsonify({"success": True, "message": "Vault created successfully!", "data": vault_dict}), 201

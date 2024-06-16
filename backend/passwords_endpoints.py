@@ -4,7 +4,7 @@ from bson import ObjectId
 from flask import Blueprint, request, jsonify
 from pydantic import ValidationError
 from flask_jwt_extended import jwt_required
-
+from encryption import decrypt, encrypt
 passwords_bp = Blueprint("passwords", __name__)
 db = client["pm"]
 
@@ -33,6 +33,7 @@ def create_password():
         )
 
     password_dict = password.dict()
+    password_dict['encrypted_password'] = encrypt(password_dict['encrypted_password'])
     db["password"].insert_one(password_dict)
     password_dict["_id"] = str(password_dict["_id"])
     return (
@@ -48,12 +49,20 @@ def create_password():
 
 
 # Get a Password by ID
-@passwords_bp.route("/password/<password_id>", methods=["GET"])
+@passwords_bp.route("/password/<password_id>", methods=["POST"])
 # @jwt_required()
 def get_password(password_id):
     if not password_id:
         return jsonify({"success": False, "message": "Please provide password id"}), 400
     password_id = ObjectId(password_id)
+    master_key = request.get_json()['master_key']
+    if not request.get_json()['master_key']:
+        return (
+            jsonify(
+                {"success": False, "message": f"Please provide master key to unlock the vault"}
+            ),
+            400,
+        )
     password = db["password"].find_one({"_id": password_id})
     if not password:
         return (
@@ -62,17 +71,31 @@ def get_password(password_id):
             ),
             400,
         )
+    vault_id = ObjectId(password["vault_id"])
+    vault = db["vault"].find_one({"_id": vault_id})
+    if not vault:
+        return jsonify({"success": False, "message": f"Vault with {vault_id} not found"}), 400
+    print(decrypt(vault['master_key']))
+    print(decrypt(vault['master_key']) == master_key)
     password["_id"] = str(password["_id"])
-    return (
-        jsonify(
-            {
-                "success": True,
-                "message": "Password fetched successfully",
-                "data": password,
-            }
-        ),
-        200,
-    )
+    
+    # If master key matches
+    if decrypt(vault['master_key']) == master_key:
+        password['encrypted_password'] = decrypt(password["encrypted_password"])
+        return (
+            jsonify(
+                {
+                    "success": True,
+                    "message": "Password fetched successfully",
+                    "data": password,
+                }
+            ),
+            200,
+        )
+    else:
+        return jsonify({"success": False, "message": f"Please provide correct master key."}), 403
+    
+
 
 
 # Get All Passwords
