@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
 import { AppContext } from './AppContext'
 import Home from './Home/Home'
-import { User } from './utils/Interface'
+import { User } from './utils/interface/Interface'
 import { APIService } from './Services/APIService'
 
 export const removeAccessToken = () => {
@@ -61,7 +61,7 @@ function App() {
     <Router>
       <AppContext.Provider value={appContextValue}>
         <Routes>
-          <Route path="/" element={isLoggedIn ? <Home /> : <Auth />} />
+          <Route path="/*" element={isLoggedIn ? <Home /> : <Auth />} />
         </Routes>
       </AppContext.Provider>
     </Router>

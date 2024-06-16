@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { User } from "./utils/Interface";
+import { User } from "./utils/interface/Interface";
 interface appContextProps {
   isLoggedIn?: boolean;
   setIsLoggedIn?: React.Dispatch<React.SetStateAction<boolean>>;

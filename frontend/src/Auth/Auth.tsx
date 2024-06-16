@@ -7,7 +7,7 @@ import { useState } from 'react'
 import Loader from '../utils/Loader'
 import axios from 'axios'
 import { APIService } from '../Services/APIService'
-import { User } from '../utils/Interface'
+import { User } from '../utils/interface/Interface'
 import { removeAccessToken } from '../App'
 
 const Auth = () => {

@@ -1,3 +1,7 @@
 .inputRounded .MuiOutlinedInput-root {
     border-radius: 20px !important;
 }
+
+.error {
+    color: rgb(229, 50, 50);
+}

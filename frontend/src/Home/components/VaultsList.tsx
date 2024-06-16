@@ -1,19 +1,27 @@
 import { useEffect, useState } from 'react'
-import { Vault } from '../../utils/Interface'
+import { Vault } from '../../utils/interface/Interface'
 import { APIService } from '../../Services/APIService'
 import { Box, Card, TextField, Typography } from '@mui/material'
 import VaultListItem from './VaultListItem'
 import CreateVault from './CreateVault'
+import CircularProgressCustom from './CircularProgressCustom'
 
 const VaultsList = () => {
   const [vaults, setVaults] = useState<Vault[]>([])
   const [search, setSearch] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
-    const getVaults = async () => {
-      setVaults(await APIService.getAllVaults())
-    }
     getVaults()
   }, [])
+  const getVaults = async () => {
+    try {
+      setLoading(true)
+      setVaults(await APIService.getAllVaults())
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+    }
+  }
   const onChangeSearch = (e: string) => {
     setSearch(e)
   }
@@ -43,7 +51,11 @@ const VaultsList = () => {
           >
             <Typography variant="h3">Vaults</Typography>
 
-            <CreateVault />
+            <CreateVault
+              onSubmit={() => {
+                getVaults()
+              }}
+            />
           </Box>
 
           <Box>
@@ -67,22 +79,26 @@ const VaultsList = () => {
             display: 'flex',
             flexWrap: 'wrap',
           }}
+          width={1}
+          display={'flex'}
+          justifyContent={'center'}
         >
-          {vaults.map((v) => (
-            <VaultListItem vault={v} />
-          ))}
-          {vaults.map((v) => (
-            <VaultListItem vault={v} />
-          ))}
-          {vaults.map((v) => (
-            <VaultListItem vault={v} />
-          ))}
-          {vaults.map((v) => (
-            <VaultListItem vault={v} />
-          ))}
-          {vaults.map((v) => (
-            <VaultListItem vault={v} />
-          ))}
+          {loading ? (
+            <CircularProgressCustom />
+          ) : (
+            vaults.map((v) => (
+              <VaultListItem
+                onDelete={async (vault) => {
+                  if (vault?._id) {
+                    setLoading(true)
+                    await APIService.deleteVault(vault?._id)
+                    await getVaults()
+                  }
+                }}
+                vault={v}
+              />
+            ))
+          )}
         </Box>
       </Box>
     </Card>

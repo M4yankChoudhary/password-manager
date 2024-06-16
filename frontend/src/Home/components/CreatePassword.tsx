@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Box, Button, Modal, TextField, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { CreateVaultSchema, CreateVaultType } from '../../utils/types/types'
+import { CreatePasswordSchema, CreatePasswordType } from '../../utils/types/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { APIService } from '../../Services/APIService'
 import CircularProgressCustom from './CircularProgressCustom'
+import { APIService } from '../../Services/APIService'
 
 const style = {
   position: 'absolute' as const,
@@ -18,10 +18,11 @@ const style = {
 }
 
 interface CreateVaultProps {
+  vaultId: string
   onSubmit: () => void
 }
 
-const CreateVault = (props: CreateVaultProps) => {
+const CreatePassword = (props: CreateVaultProps) => {
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>()
@@ -31,16 +32,17 @@ const CreateVault = (props: CreateVaultProps) => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateVaultType>({ resolver: zodResolver(CreateVaultSchema) })
+  } = useForm<CreatePasswordType>({ resolver: zodResolver(CreatePasswordSchema) })
 
-  const onSubmit: SubmitHandler<CreateVaultType> = async (data) => {
+  const onSubmit: SubmitHandler<CreatePasswordType> = async (data) => {
     try {
       setError("")
       setLoading(true)
-      await APIService.createVault({
-        name: data.name,
-        master_key: data.master_key,
-        description: data.description
+      await APIService.createPassword({
+        username: data.username,
+        domain: data.domain,
+        encrypted_password: data.encrypted_password,
+        vault_id: props.vaultId
       })
       props.onSubmit()
       setLoading(false)
@@ -85,7 +87,7 @@ const CreateVault = (props: CreateVaultProps) => {
           ]}
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Create a new vault
+            New Password
           </Typography>
           <form
             style={{
@@ -98,29 +100,29 @@ const CreateVault = (props: CreateVaultProps) => {
           >
             <TextField
               className="inputRounded"
-              placeholder="Give your vault a name"
+              placeholder="Username"
               variant="outlined"
-              {...register('name')}
+              {...register('username')}
               size="small"
             />
-            {errors.name && <span className='error'>{errors.name.message}</span>}
+            {errors.username && <span className='error'>{errors.username.message}</span>}
             <TextField
               className="inputRounded"
-              placeholder="Write something about this vault."
+              placeholder="Domain"
               variant="outlined"
-              {...register('description')}
+              {...register('domain')}
               size="small"
             />
-            {errors.description && <span className='error'>{errors.description.message}</span>}
+            {errors.domain && <span className='error'>{errors.domain.message}</span>}
             <TextField
               className="inputRounded"
-              placeholder="Provide a Master Key"
+              placeholder="Password"
               variant="outlined"
               type="password"
-              {...register('master_key')}
+              {...register('encrypted_password')}
               size="small"
             />
-            {errors.master_key && <span className='error'>{errors.master_key.message}</span>}
+            {errors.encrypted_password && <span className='error'>{errors.encrypted_password.message}</span>}
             <Button
               type="submit"
               className="center"
@@ -147,4 +149,4 @@ const CreateVault = (props: CreateVaultProps) => {
   )
 }
 
-export default CreateVault
+export default CreatePassword

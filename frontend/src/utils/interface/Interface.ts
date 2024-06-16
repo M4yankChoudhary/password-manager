@@ -13,8 +13,10 @@ export interface Vault {
   _id?: string;
   name?: string;
   description?: string;
-  master_key?: boolean;
+  master_key?: string;
 }
+
+export type CreateVaultInput = Omit<Vault, '_id'>;
 
 export interface Password {
   _id?: string;

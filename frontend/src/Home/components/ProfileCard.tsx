@@ -1,5 +1,5 @@
 import { Box, Button, Card, Typography } from '@mui/material'
-import { User } from '../../utils/Interface'
+import { User } from '../../utils/interface/Interface'
 import { removeAccessToken } from '../../App'
 import { useAppContext } from '../../AppContext'
 

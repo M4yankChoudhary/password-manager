@@ -24,7 +24,7 @@ def create_vault():
     vault_dict = vault.dict()
     db["vault"].insert_one(vault_dict)
     vault_dict["_id"] = str(vault_dict["_id"])
-    return jsonify({"success": True, "message": "Vault created successfully!", "vault": vault_dict}), 201
+    return jsonify({"success": True, "message": "Vault created successfully!", "data": vault_dict}), 201
 
 # Get a Vault by ID
 @vaults_bp.route("/vault/<vault_id>", methods=["GET"])
@@ -80,7 +80,9 @@ def delete_vault(vault_id):
     vault_id = ObjectId(vault_id)
     if not db["vault"].find_one({"_id": vault_id}):
         return jsonify({"success": False, "message": f"Vault with {vault_id} not found"}), 400
-    result = db["vault"].delete_one({"_id": vault_id})
+    
+    db["vault"].delete_one({"_id": vault_id})
+    db["password"].delete_many({"vault_id": str(vault_id)})
     return jsonify({"success": True, "message": "Vault Deleted Successfully!"}), 200
 
 

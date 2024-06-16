@@ -1,26 +1,38 @@
-import {Chip, Typography } from '@mui/material'
-import { Vault } from '../../utils/Interface'
+import { ListItem, Typography } from '@mui/material'
+import { Vault } from '../../utils/interface/Interface'
+import { useNavigate } from 'react-router-dom'
+import { Delete } from '@mui/icons-material'
 
 type Props = {
   vault?: Vault
+  onDelete: (vault?: Vault) => void
 }
 
 const VaultListItem = (props: Props) => {
+  const navigate = useNavigate()
   return (
-    <Chip
+    <ListItem
       sx={{
-        boxShadow:
-          'rgba(255, 255, 255, 0.2) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.9) 0px 0px 0px 1px',
-        border: 'none',
-        cursor: 'pointer',
         ':hover': {
-            bgcolor: 'black',
-            color:'white'
-        }
+          borderRadius: '12px',
+          bgcolor: '#D6D6D65E',
+        },
+        justifyContent: 'space-between',
       }}
-      label={<Typography>{props.vault?.name}</Typography>}
-      variant="outlined"
-    />
+      className="center"
+    >
+      <Typography
+        sx={{
+          cursor: 'pointer',
+        }}
+        onClick={() => {
+          navigate('/passwords', { state: { vault: props.vault } })
+        }}
+      >
+        {props.vault?.name}
+      </Typography>
+      <Delete sx={{ cursor: 'pointer' }} onClick={() => {props.onDelete(props.vault)}} />
+    </ListItem>
   )
 }
 
