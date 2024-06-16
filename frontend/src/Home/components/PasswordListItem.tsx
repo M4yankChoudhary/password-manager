@@ -7,15 +7,13 @@ import {
   Typography,
 } from '@mui/material'
 import { Password } from '../../utils/interface/Interface'
-import {
-  HideSourceTwoTone,
-  RemoveRedEye,
-} from '@mui/icons-material'
+import { HideSourceTwoTone, RemoveRedEye } from '@mui/icons-material'
 import { useState } from 'react'
 import CircularProgressCustom from './CircularProgressCustom'
 import { ShowPasswordSchema, ShowPasswordType } from '../../utils/types/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
+import { APIService } from '../../Services/APIService'
 
 type Props = {
   password?: Password
@@ -59,15 +57,26 @@ const PasswordListItem = (props: Props) => {
 
   const onSubmit: SubmitHandler<ShowPasswordType> = async (data) => {
     try {
-      setError("")
+      setError('')
       setLoading(true)
-      handleClose()
-      setPassword('123456')
-      reset({})
-      setLoading(false)
+
+     
+
+      if (props.password?._id) {
+        const pass = await APIService.getPasswordUsingMasterKey({
+          _id: props.password?._id,
+          master_key: data.master_key,
+        })
+        setPassword(pass.encrypted_password)
+        handleClose()
+        reset({})
+        setLoading(false)
+      }
+
       console.log(data)
     } catch (error) {
       console.log(error)
+      setPassword("")
       setLoading(false)
       setError(error?.toString())
     }
@@ -176,7 +185,15 @@ const PasswordListItem = (props: Props) => {
               ? password
               : '••••••••••••••••••••••••••••'}
           </Typography>
-          {password ? <HideSourceTwoTone onClick={() => {console.log("Hello")}} /> : <RemoveRedEye />}
+          {password ? (
+            <HideSourceTwoTone
+              onClick={() => {
+                console.log('Hello')
+              }}
+            />
+          ) : (
+            <RemoveRedEye />
+          )}
         </Box>
       </Box>
       {/* Password Reval Modal */}
@@ -206,7 +223,7 @@ const PasswordListItem = (props: Props) => {
             <TextField
               className="inputRounded"
               placeholder="Master Key"
-              type='password'
+              type="password"
               variant="outlined"
               {...register('master_key')}
               size="small"

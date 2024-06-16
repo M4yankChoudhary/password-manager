@@ -1,5 +1,11 @@
 import axios from "axios";
-import { CreateVaultInput, Password, User, Vault } from '../utils/interface/Interface';
+import {
+  CreateVaultInput,
+  Password,
+  PasswordFindArgs,
+  User,
+  Vault,
+} from "../utils/interface/Interface";
 import { handleAxiosError } from "../utils/extensions";
 
 export class APIService {
@@ -52,7 +58,10 @@ export class APIService {
   static getPasswords(vaultId: string): Promise<Password[]> {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${process.env.BACKEND_URL}/passwords/vault/${vaultId}`, this.config)
+        .get(
+          `${process.env.BACKEND_URL}/passwords/vault/${vaultId}`,
+          this.config
+        )
         .then((response) => {
           resolve(response.data["data"]);
           console.log("passwords list", response.data["data"]);
@@ -82,6 +91,25 @@ export class APIService {
         .then((response) => {
           resolve(response.data);
           console.log("password create", response.data);
+        })
+        .catch((error) => {
+          reject(handleAxiosError(error)?.message);
+        });
+    });
+  }
+  static getPasswordUsingMasterKey(passwordFindArgs: PasswordFindArgs): Promise<Password> {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(
+          `${process.env.BACKEND_URL}/password/${passwordFindArgs._id}`,
+          {
+            master_key: passwordFindArgs.master_key,
+          },
+          this.config
+        )
+        .then((response) => {
+          resolve(response.data['data']);
+          console.log("password create", response.data['data']);
         })
         .catch((error) => {
           reject(handleAxiosError(error)?.message);

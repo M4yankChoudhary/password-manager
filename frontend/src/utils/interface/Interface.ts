@@ -25,3 +25,8 @@ export interface Password {
   encrypted_password?: string;
   vault_id?: string;
 }
+
+export interface PasswordFindArgs {
+  _id: string,
+  master_key: string
+}
