@@ -20,7 +20,7 @@ def create_vault():
         vault = Vault(**data)
     except ValidationError as e:
         return jsonify({"success": False, "message": e.errors()}), 400
-    vault['master_key'] = 
+    
     vault_dict = vault.dict()
     db["vault"].insert_one(vault_dict)
     vault_dict["_id"] = str(vault_dict["_id"])
