@@ -16,6 +16,9 @@ const PasswordsCard = () => {
 
   useEffect(() => {
     getPasswords()
+    setTimeout(() => {
+       !vault?._id && navigate(-1)
+    }, 1000);
   }, [])
 
   const getPasswords = async () => {

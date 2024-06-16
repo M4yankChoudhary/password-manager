@@ -22,6 +22,7 @@ const VaultListItem = (props: Props) => {
       className="center"
     >
       <Typography
+      flex={1}
         sx={{
           cursor: 'pointer',
         }}
@@ -31,7 +32,7 @@ const VaultListItem = (props: Props) => {
       >
         {props.vault?.name}
       </Typography>
-      <Delete sx={{ cursor: 'pointer' }} onClick={() => {props.onDelete(props.vault)}} />
+      <Delete sx={{ cursor: 'pointer', }} onClick={() => {props.onDelete(props.vault)}} />
     </ListItem>
   )
 }
