@@ -6,14 +6,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Password } from '../../utils/interface/Interface'
+import { Password } from '../../../utils/interface/Interface'
 import { HideSourceTwoTone, RemoveRedEye } from '@mui/icons-material'
 import { useState } from 'react'
-import CircularProgressCustom from './CircularProgressCustom'
-import { ShowPasswordSchema, ShowPasswordType } from '../../utils/types/types'
+import CircularProgressCustom from '../CircularProgressCustom'
+import { ShowPasswordSchema, ShowPasswordType } from '../../../utils/types/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { APIService } from '../../Services/APIService'
+import { APIService } from '../../../Services/APIService'
 
 type Props = {
   password?: Password

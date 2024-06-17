@@ -2,15 +2,15 @@ import { ArrowBackIos } from '@mui/icons-material'
 import { Box, Card, TextField, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Password } from '../../utils/interface/Interface'
-import { APIService } from '../../Services/APIService'
+import { Password } from '../../../utils/interface/Interface'
+import { APIService } from '../../../Services/APIService'
 import CreatePassword from './CreatePassword'
 import PasswordListItem from './PasswordListItem'
 
 const PasswordsCard = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { vault } = location.state
+  const { vault } = location.state || {};
 
   const [passwords, setPasswords] = useState<Password[]>([])
 

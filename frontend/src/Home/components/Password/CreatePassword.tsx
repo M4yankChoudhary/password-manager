@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Box, Button, Modal, TextField, Typography } from '@mui/material'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { CreatePasswordSchema, CreatePasswordType } from '../../utils/types/types'
+import { CreatePasswordSchema, CreatePasswordType } from '../../../utils/types/types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import CircularProgressCustom from './CircularProgressCustom'
-import { APIService } from '../../Services/APIService'
+import CircularProgressCustom from '../CircularProgressCustom'
+import { APIService } from '../../../Services/APIService'
 
 const style = {
   position: 'absolute' as const,

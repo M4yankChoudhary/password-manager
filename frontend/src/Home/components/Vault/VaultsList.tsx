@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Vault } from '../../utils/interface/Interface'
-import { APIService } from '../../Services/APIService'
+
 import { Box, Card, TextField, Typography } from '@mui/material'
 import VaultListItem from './VaultListItem'
 import CreateVault from './CreateVault'
-import CircularProgressCustom from './CircularProgressCustom'
+import { Vault } from '../../../utils/interface/Interface'
+import CircularProgressCustom from '../CircularProgressCustom'
+import { APIService } from '../../../Services/APIService'
+
 
 const VaultsList = () => {
   const [vaults, setVaults] = useState<Vault[]>([])

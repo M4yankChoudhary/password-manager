@@ -2,9 +2,10 @@ import { Box } from '@mui/material'
 import { useAppContext } from '../AppContext'
 import { useEffect } from 'react'
 import ProfileCard from './components/ProfileCard'
-import VaultsList from './components/VaultsList'
-import PasswordsCard from './components/PasswordsCard'
+
+import PasswordsCard from './components/Password/PasswordsCard'
 import { Route, Routes } from 'react-router-dom'
+import VaultsList from './components/Vault/VaultsList'
 
 const Home = () => {
   const { loggedInUser } = useAppContext()
@@ -24,8 +25,6 @@ const Home = () => {
         <Route path={'/*'} element={<VaultsList />} />
         <Route path={'/passwords'} element={<PasswordsCard />} />
       </Routes>
-
-      
     </Box>
   )
 }
