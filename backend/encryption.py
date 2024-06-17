@@ -65,12 +65,3 @@ def decrypt(ciphertext: str) -> str:
         return decrypted_data.decode()
     except:
         return ciphertext
-
-
-plaintext = "This is a secret message."
-
-encrypted = encrypt(plaintext)
-print(f"Encrypted: {encrypted}")
-
-decrypted = decrypt(encrypted)
-print(f"Decrypted: {decrypted}")
