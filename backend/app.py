@@ -78,7 +78,7 @@ def login():
     )
     jwt_token = create_access_token(identity=user_info["email"])
     response = jsonify(user=user_info)
-    response.set_cookie("access_token_cookie", value=jwt_token, secure=False)
+    response.set_cookie("access_token_cookie", value=jwt_token, secure=True)
     return response, 200
 
 
