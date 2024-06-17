@@ -36,10 +36,12 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # JWT Manager
 app.config["JWT_SECRET_KEY"] = SECRET_KEY
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False  
 jwt = JWTManager(app)
 
 app.register_blueprint(vaults_bp)
 app.register_blueprint(passwords_bp)
+
 
 @app.route("/", methods=["GET"])
 def hello_world():

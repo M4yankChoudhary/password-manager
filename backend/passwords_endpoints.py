@@ -11,7 +11,7 @@ db = client["pm"]
 
 # Create a Password
 @passwords_bp.route("/password", methods=["POST"])
-# @jwt_required()
+@jwt_required()
 def create_password():
     data = request.get_json()
     try:
@@ -50,7 +50,7 @@ def create_password():
 
 # Get a Password by ID
 @passwords_bp.route("/password/<password_id>", methods=["POST"])
-# @jwt_required()
+@jwt_required()
 def get_password(password_id):
     if not password_id:
         return jsonify({"success": False, "message": "Please provide password id"}), 400
@@ -100,7 +100,7 @@ def get_password(password_id):
 
 # Get All Passwords
 @passwords_bp.route("/passwords", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_all_passwords():
     passwords = list(db["password"].find())
     for password in passwords:
@@ -116,7 +116,7 @@ def get_all_passwords():
 
 # Update a Password by ID
 @passwords_bp.route("/password/<password_id>", methods=["PATCH"])
-# @jwt_required()
+@jwt_required()
 def update_password(password_id):
     data = request.get_json()
     if not password_id:
@@ -146,7 +146,7 @@ def update_password(password_id):
 
 # Delete a Password by ID
 @passwords_bp.route("/password/<password_id>", methods=["DELETE"])
-# @jwt_required()
+@jwt_required()
 def delete_password(password_id):
     if not password_id:
         return jsonify({"success": False, "message": "Please provide password id"}), 400
@@ -163,7 +163,7 @@ def delete_password(password_id):
 
 
 @passwords_bp.route("/passwords/vault/<vault_id>", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_passwords_by_vault_id(vault_id):
     try:
         passwords = list(db["password"].find({"vault_id": vault_id}))

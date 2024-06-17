@@ -15,8 +15,9 @@ db = client["pm"]
 
 # create a vault
 @vaults_bp.route("/vault", methods=["POST"])
-# @jwt_required()
+@jwt_required()
 def create_vault():
+
     data = request.get_json()
     try:
         vault = Vault(**data)
@@ -31,7 +32,7 @@ def create_vault():
 
 # Get a Vault by ID
 @vaults_bp.route("/vault/<vault_id>", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_vault(vault_id):
     if not vault_id:
         return jsonify({"success": False, "message": "Please provide vault id"}), 400
@@ -44,7 +45,7 @@ def get_vault(vault_id):
 
 # Get All Vaults
 @vaults_bp.route("/vaults", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_all_vaults():
     vaults = list(db["vault"].find())
     for vault in vaults:
@@ -53,7 +54,7 @@ def get_all_vaults():
 
 # Update a vault by id
 @vaults_bp.route("/vault/<vault_id>", methods=["PATCH"])
-# @jwt_required()
+@jwt_required()
 def update_vault(vault_id):
     data = request.get_json()
     if not vault_id:
@@ -76,7 +77,7 @@ def update_vault(vault_id):
 
 # DELETE a Vault by ID
 @vaults_bp.route("/vault/<vault_id>", methods=["DELETE"])
-# @jwt_required()
+@jwt_required()
 def delete_vault(vault_id):
     if not vault_id:
         return jsonify({"success": False,"messsage": "Please provide vault id"}), 400
